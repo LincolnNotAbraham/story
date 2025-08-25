@@ -2,6 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
+from routers import story, job
+from db.database import create_table
+
+create_table()
 
 app = FastAPI(
     title="Escolha seu jogo de aventura API",
@@ -19,6 +23,10 @@ app.add_middleware(
     allow_headers=["*"],
 
 )
+
+app.include_router(story.router, prefix=settings.API_PREFIX)
+app.include_router(job.router, prefix=settings.API_PREFIX)
+
 
 if __name__ == "__main__":
     import uvicorn
