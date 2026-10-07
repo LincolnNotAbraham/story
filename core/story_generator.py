@@ -11,6 +11,7 @@ from models.story import Story,StoryNode
 from core.models import StoryLLMResponse, StoryNodeLLM
 
 class StoryGenerator:
+    """Gera historias ramificadas usando um LLM e persiste a arvore no banco."""
 
     @classmethod
     def _get_llm(cls):
@@ -21,6 +22,7 @@ class StoryGenerator:
         )
     @classmethod
     def generate_story(cls, db:Session, session_id: str, theme: str = "fantasy") -> Story:
+        """Gera uma historia completa a partir do tema informado e salva no banco."""
         llm = cls._get_llm()
         story_parser = PydanticOutputParser(pydantic_object=StoryLLMResponse)
 
@@ -58,6 +60,7 @@ class StoryGenerator:
 
     @classmethod
     def _process_story_node(cls, db: Session, story_id: int, node_data : StoryNodeLLM, is_root: bool = False):
+        """Persiste um no da historia e seus filhos recursivamente."""
         node = StoryNode(
             story_id=story_id,
             content= node_data.content, #if hasattr(node_data, "content") else node_data["content"],

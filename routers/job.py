@@ -14,6 +14,7 @@ router = APIRouter(
 
 @router.get(path="/{job_id}", response_model=StoryJobResponse)
 def get_job_status(job_id:str, db: Session = Depends(get_db) ):
+    """Retorna o status atual de um job de geracao de historia."""
     job = db.query(StoryJob).filter(StoryJob.job_id== job_id).first()
     
     if not job:

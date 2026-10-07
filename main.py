@@ -1,3 +1,4 @@
+"""Ponto de entrada da API de histórias de aventura (FastAPI)."""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 

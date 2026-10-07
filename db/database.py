@@ -12,6 +12,7 @@ SessionLocal = sessionmaker(autoflush=False, autocommit=False, bind=engine)
 Base = declarative_base()
 
 def get_db():
+    """Fornece uma sessao do banco para injecao de dependencia (FastAPI)."""
     db = SessionLocal()
     try:
         yield db
@@ -19,6 +20,7 @@ def get_db():
         db.close()
 
 def create_table():
+    """Cria as tabelas do banco de dados se ainda nao existirem."""
     from models.job import StoryJob
     from models.story import Story, StoryNode
     Base.metadata.create_all(bind=engine)

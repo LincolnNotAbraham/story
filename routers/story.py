@@ -21,6 +21,7 @@ router = APIRouter(
 )
 
 def get_session_id(sid: Optional[str]=Cookie(None)):
+    """Obtem o session_id do cookie ou gera um novo para visitantes."""
     if not sid:
         sid = str(uuid.uuid4())
     return sid
@@ -33,6 +34,7 @@ def create_story(
     session_id: str = Depends(get_session_id),
     db: Session= Depends(get_db)
 ):
+    """Cria um job de geracao de historia em background e retorna seu status."""
     response.set_cookie(key="session_id", value=session_id, httponly=True)
 
     job_id = str(uuid.uuid4())
@@ -58,6 +60,7 @@ def create_story(
 
 
 def generate_story_task(job_id: str, theme: str, session_id: str):
+    """Tarefa em background: gera a historia e atualiza o status do job."""
     db = SessionLocal()
 
     try:
@@ -86,6 +89,7 @@ def generate_story_task(job_id: str, theme: str, session_id: str):
 
 @router.get(path="/{story_id}/complete", response_model=CompleteStoryResponse)
 def get_complete_story(story_id: int, db: Session = Depends(get_db)):
+    """Retorna a arvore completa de uma historia pelo seu id."""
     story = db.query(Story).filter(Story.id==story_id).first()
     if not story:
         raise HTTPException(status_code=404, detail="Story not found")
@@ -95,6 +99,7 @@ def get_complete_story(story_id: int, db: Session = Depends(get_db)):
 
 
 def build_complete_story_tree(db: Session, story: Story) -> CompleteStoryResponse:
+    """Monta a resposta completa com todos os nos da historia."""
     # Buscar todos os nós da história
     nodes = db.query(StoryNode).filter(StoryNode.story_id == story.id).all()
     
